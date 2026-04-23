@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Smart To-Do List</title>
+  <title>Daily Planner Pro</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -20,7 +20,6 @@
       --radius-sm: 9px;
       --shadow: 0 2px 12px rgba(99,102,241,0.08);
       --shadow2: 0 4px 24px rgba(99,102,241,0.13);
-
       --todo-bg: #eff6ff; --todo-text: #2563eb; --todo-border: #bfdbfe;
       --prog-bg: #faf5ff; --prog-text: #7c3aed; --prog-border: #ddd6fe;
       --done-bg: #f0fdf4; --done-text: #16a34a; --done-border: #bbf7d0;
@@ -36,7 +35,6 @@
 
     .container { max-width: 520px; margin: 0 auto; }
 
-    /* Header */
     .header { margin-bottom: 1.25rem; }
     .app-badge {
       display: inline-flex; align-items: center; gap: 6px;
@@ -45,18 +43,17 @@
       padding: 4px 12px; border-radius: 99px; margin-bottom: 10px;
       font-weight: 600;
     }
-    h1 { font-size: 26px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
-    .subtitle { font-size: 13px; color: var(--muted); }
+    h1 { font-size: 26px; font-weight: 700; color: var(--text); }
+    .subtitle { font-size: 13px; color: var(--muted); margin-bottom: 1rem; }
 
     /* Backup Buttons */
     .backup-row { display: flex; gap: 8px; margin-bottom: 1rem; }
     .btn-backup {
-      flex: 1; padding: 8px; font-size: 12px; font-weight: 600;
+      flex: 1; padding: 10px; font-size: 12px; font-weight: 600;
       background: var(--white); border: 1px solid var(--border2);
       border-radius: var(--radius-sm); cursor: pointer; color: var(--muted);
-      transition: all 0.2s;
+      font-family: inherit;
     }
-    .btn-backup:hover { background: #f9fafb; border-color: #9ca3af; }
 
     /* Date nav */
     .date-nav {
@@ -68,38 +65,288 @@
     .btn-nav {
       background: var(--bg); border: 1px solid var(--border2);
       border-radius: var(--radius-sm); width: 34px; height: 34px;
-      cursor: pointer; font-size: 15px; color: var(--text);
-      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 15px; display: flex; align-items: center; justify-content: center;
     }
-    .btn-nav:hover { background: #eff6ff; border-color: #bfdbfe; }
-    .cur-date { flex: 1; text-align: center; font-size: 14px; font-weight: 600; color: var(--text); }
+    .cur-date { flex: 1; text-align: center; font-size: 14px; font-weight: 600; }
     .btn-today {
       background: #eff6ff; border: 1px solid #bfdbfe;
       border-radius: var(--radius-sm); padding: 5px 12px;
-      font-size: 12px; cursor: pointer; color: #2563eb; font-family: inherit; font-weight: 500;
+      font-size: 12px; cursor: pointer; color: #2563eb; font-weight: 500; font-family: inherit;
     }
-    .btn-today:hover { background: #dbeafe; }
 
-    /* Overview */
+    /* Stats Overview */
     .overview {
       background: var(--white); border: 1px solid var(--border);
       border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1rem;
       box-shadow: var(--shadow);
     }
-    .overview-title { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1rem; }
     .overview-body { display: flex; gap: 1.25rem; align-items: center; }
-    .pie-wrap { flex-shrink: 0; position: relative; width: 120px; height: 120px; }
+    .pie-wrap { position: relative; width: 100px; height: 100px; }
     .pie-center {
-      position: absolute; inset: 0;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      pointer-events: none;
+      position: absolute; inset: 0; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; pointer-events: none;
     }
-    .pie-pct { font-size: 22px; font-weight: 700; color: #7c3aed; }
-    .pie-label { font-size: 10px; color: var(--muted); font-weight: 500; }
+    .pie-pct { font-size: 20px; font-weight: 700; color: #7c3aed; }
+    .stats-right { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+    .stat-row { display: flex; justify-content: space-between; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; }
 
-    .stats-right { flex: 1; display: flex; flex-direction: column; gap: 7px; }
-    .stat-row {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 8px 12px; border-radius: var(--radius-sm);
+    /* Progress bar */
+    .progress-wrap {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1rem; margin-bottom: 1rem;
     }
-    .stat-row-left { display: flex; align
+    .progress-bar-bg { background: #f3f4f6; border-radius: 99px; height: 10px; overflow: hidden; margin-top: 8px; }
+    .progress-bar-fill { background: linear-gradient(90deg, #7c3aed, #2563eb); height: 10px; transition: width 0.4s; }
+
+    /* Form */
+    .add-form { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.1rem; margin-bottom: 1rem; }
+    .add-form input, .add-form select {
+      width: 100%; padding: 10px; margin-bottom: 8px; border: 1px solid var(--border2);
+      border-radius: var(--radius-sm); font-family: inherit; font-size: 14px; outline: none;
+    }
+    .add-row { display: flex; gap: 8px; }
+    .btn-add {
+      width: 100%; padding: 12px; border: none; border-radius: var(--radius-sm);
+      background: linear-gradient(90deg, #7c3aed, #2563eb); color: white;
+      font-weight: 700; cursor: pointer; font-family: inherit; margin-top: 5px;
+    }
+
+    /* List */
+    .todo-item { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; margin-bottom: 8px; box-shadow: var(--shadow); }
+    .cat-label { font-size: 10px; font-weight: 800; color: #7c3aed; margin-bottom: 4px; display: block; }
+    .todo-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+    .todo-text { flex: 1; font-size: 15px; }
+    .badge { padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 700; border: 1px solid transparent; cursor: pointer; }
+    .badge-todo { background: var(--todo-bg); color: var(--todo-text); border-color: var(--todo-border); }
+    .badge-inprogress { background: var(--prog-bg); color: var(--prog-text); border-color: var(--prog-border); }
+    .badge-done { background: var(--done-bg); color: var(--done-text); border-color: var(--done-border); }
+
+    .btn-history { width: 100%; padding: 10px; background: #059669; color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; margin-bottom: 1rem; font-family: inherit; }
+    .history-list { display: none; background: white; border: 1px solid var(--border); border-radius: 12px; padding: 1rem; margin-bottom: 1rem; max-height: 200px; overflow-y: auto; }
+    .overdue-box { background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 1rem; margin-bottom: 1rem; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div class="app-badge">Planner v3</div>
+    <h1>To-Do List</h1>
+    <p class="subtitle">บันทึกงานและสำรองข้อมูลได้ทุกที่</p>
+  </div>
+
+  <div class="backup-row">
+    <button class="btn-backup" onclick="exportData()">📤 Backup (ส่งออก)</button>
+    <button class="btn-backup" onclick="document.getElementById('fileIn').click()">📥 Restore (นำเข้า)</button>
+    <input type="file" id="fileIn" style="display:none" onchange="importData(event)" accept=".json">
+  </div>
+
+  <div class="date-nav">
+    <button class="btn-nav" onclick="changeDay(-1)">←</button>
+    <div class="cur-date" id="dateLabel"></div>
+    <button class="btn-nav" onclick="changeDay(1)">→</button>
+    <button class="btn-today" onclick="goToday()">วันนี้</button>
+  </div>
+
+  <div class="overview">
+    <div class="overview-body">
+      <div class="pie-wrap">
+        <canvas id="myChart"></canvas>
+        <div class="pie-center"><div class="pie-pct" id="totalPct">0%</div></div>
+      </div>
+      <div class="stats-right">
+        <div class="stat-row" style="background:#eff6ff"><span>ทั้งหมด</span><span id="statAll">0</span></div>
+        <div class="stat-row" style="background:#f0fdf4"><span>สำเร็จ</span><span id="statDone">0</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="progress-wrap">
+    <div style="display:flex; justify-content:space-between; font-size:13px;">
+      <span>ความคืบหน้าวันนี้</span>
+      <span id="todayCount">0/0</span>
+    </div>
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="todayBar" style="width:0%"></div></div>
+  </div>
+
+  <button class="btn-history" onclick="toggleHistory()">📊 ดูงานที่สำเร็จแล้วทั้งหมด</button>
+  <div id="historyBox" class="history-list"></div>
+
+  <div id="overdueBox" class="overdue-box" style="display:none">
+    <p style="font-size:12px; font-weight:700; color:#d97706; margin-bottom:8px;">⚠️ งานค้างจากวันก่อน</p>
+    <div id="overdueItems"></div>
+  </div>
+
+  <div class="add-form">
+    <input type="text" id="taskInput" placeholder="สิ่งที่ต้องทำ..." maxlength="100">
+    <div class="add-row">
+      <select id="catInput">
+        <option value="Personal">🔒 Personal</option>
+        <option value="Work">💼 Work</option>
+        <option value="Family">🏠 Family</option>
+        <option value="Couple">❤️ Couple</option>
+      </select>
+      <select id="statusInput">
+        <option value="todo">📋 To Do</option>
+        <option value="inprogress">⚡ Doing</option>
+        <option value="done">✅ Done</option>
+      </select>
+    </div>
+    <input type="date" id="dueInput">
+    <button class="btn-add" onclick="addTask()">+ เพิ่มรายการ</button>
+  </div>
+
+  <div id="listItems"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const KEY = 'todo_v3_final';
+  let curDate = new Date();
+  let chart = null;
+
+  function dKey(d) { return d.toISOString().split('T')[0]; }
+  function load() { return JSON.parse(localStorage.getItem(KEY)) || {}; }
+  function save(data) { localStorage.setItem(KEY, JSON.stringify(data)); }
+
+  function changeDay(n) { curDate.setDate(curDate.getDate() + n); render(); }
+  function goToday() { curDate = new Date(); render(); }
+
+  function addTask() {
+    const txt = document.getElementById('taskInput').value.trim();
+    if(!txt) return;
+    const data = load();
+    const k = dKey(curDate);
+    if(!data[k]) data[k] = [];
+    data[k].push({
+      id: Date.now(),
+      text: txt,
+      cat: document.getElementById('catInput').value,
+      status: document.getElementById('statusInput').value,
+      due: document.getElementById('dueInput').value
+    });
+    save(data);
+    document.getElementById('taskInput').value = '';
+    render();
+  }
+
+  function updateStatus(id, day) {
+    const data = load();
+    const k = day || dKey(curDate);
+    const cycle = {todo:'inprogress', inprogress:'done', done:'todo'};
+    data[k] = data[k].map(t => t.id === id ? {...t, status: cycle[t.status]} : t);
+    save(data);
+    render();
+  }
+
+  function delTask(id, day) {
+    if(!confirm('ลบรายการนี้?')) return;
+    const data = load();
+    const k = day || dKey(curDate);
+    data[k] = data[k].filter(t => t.id !== id);
+    save(data);
+    render();
+  }
+
+  function exportData() {
+    const blob = new Blob([localStorage.getItem(KEY)], {type:'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `todo-backup-${dKey(new Date())}.json`;
+    a.click();
+  }
+
+  function importData(e) {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const json = JSON.parse(ev.target.result);
+        if(confirm('นำเข้าข้อมูลใหม่และลบของเดิม?')) { save(json); render(); }
+      } catch(err) { alert('ไฟล์ไม่ถูกต้อง'); }
+    };
+    reader.readAsText(file);
+  }
+
+  function toggleHistory() {
+    const box = document.getElementById('historyBox');
+    if(box.style.display === 'block') { box.style.display = 'none'; return; }
+    const data = load();
+    let html = '';
+    Object.keys(data).forEach(k => {
+      data[k].forEach(t => {
+        if(t.status === 'done') html += `<div style="font-size:12px; padding:4px 0; border-bottom:1px solid #eee;">✅ <b>[${t.cat}]</b> ${t.text} <small style="color:#999">(${k})</small></div>`;
+      });
+    });
+    box.innerHTML = html || 'ยังไม่มีงานที่สำเร็จ';
+    box.style.display = 'block';
+  }
+
+  function render() {
+    const data = load();
+    const k = dKey(curDate);
+    const tasks = data[k] || [];
+    
+    // Header Date
+    const options = { weekday:'long', day:'numeric', month:'short', year:'numeric' };
+    document.getElementById('dateLabel').innerText = curDate.toLocaleDateString('th-TH', options);
+
+    // List Today
+    const badgeCls = {todo:'badge-todo', inprogress:'badge-inprogress', done:'badge-done'};
+    const badgeTxt = {todo:'📋 To Do', inprogress:'⚡ Doing', done:'✅ Done'};
+    
+    document.getElementById('listItems').innerHTML = tasks.map(t => `
+      <div class="todo-item" style="${t.status==='done'?'opacity:0.6':''}">
+        <span class="cat-label">${t.cat}</span>
+        <div class="todo-top">
+          <span class="todo-text" style="${t.status==='done'?'text-decoration:line-through':''}">${t.text}</span>
+          <button class="badge ${badgeCls[t.status]}" onclick="updateStatus(${t.id})">${badgeTxt[t.status]}</button>
+          <button onclick="delTask(${t.id})" style="border:none; background:none; color:red; cursor:pointer;">✕</button>
+        </div>
+      </div>
+    `).join('');
+
+    // Overdue
+    let odHtml = '';
+    Object.keys(data).forEach(day => {
+      if(day < dKey(new Date())) {
+        data[day].forEach(t => {
+          if(t.status !== 'done') odHtml += `<div class="todo-item"><span class="cat-label">${t.cat} (${day})</span><div class="todo-top"><span>${t.text}</span><button class="badge ${badgeCls[t.status]}" onclick="updateStatus(${t.id},'${day}')">${badgeTxt[t.status]}</button></div></div>`;
+        });
+      }
+    });
+    document.getElementById('overdueBox').style.display = odHtml ? 'block' : 'none';
+    document.getElementById('overdueItems').innerHTML = odHtml;
+
+    // Progress Today
+    const doneToday = tasks.filter(t => t.status === 'done').length;
+    document.getElementById('todayCount').innerText = `${doneToday}/${tasks.length}`;
+    document.getElementById('todayBar').style.width = tasks.length ? (doneToday/tasks.length*100)+'%' : '0%';
+
+    // Chart & Total
+    let totalAll = 0, totalDone = 0, totalDoing = 0, totalTodo = 0;
+    Object.values(data).flat().forEach(t => {
+      totalAll++;
+      if(t.status==='done') totalDone++;
+      else if(t.status==='inprogress') totalDoing++;
+      else totalTodo++;
+    });
+    document.getElementById('statAll').innerText = totalAll;
+    document.getElementById('statDone').innerText = totalDone;
+    document.getElementById('totalPct').innerText = totalAll ? Math.round(totalDone/totalAll*100)+'%' : '0%';
+    
+    if(!chart) {
+      chart = new Chart(document.getElementById('myChart'), {
+        type:'doughnut',
+        data:{ datasets:[{ data:[0,0,1], backgroundColor:['#16a34a','#7c3aed','#bfdbfe'], borderWidth:0 }] },
+        options:{ cutout:'75%', plugins:{legend:{display:false}} }
+      });
+    }
+    chart.data.datasets[0].data = totalAll ? [totalDone, totalDoing, totalTodo] : [0,0,1];
+    chart.update();
+  }
+
+  window.onload = render;
+</script>
+</body>
+</html>
