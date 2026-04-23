@@ -6,28 +6,24 @@
   <title>My To-Do List</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #0f0e1a;
-      --bg2: #16152a;
-      --card: #1e1c35;
-      --card2: #252343;
-      --border: #2e2b52;
-      --border2: #3d3a6e;
-      --text: #e8e6ff;
-      --muted: #8b88b8;
-      --faint: #5a5880;
-      --blue: #4f9cf9;
-      --blue-light: #1a3560;
-      --purple: #a78bfa;
-      --purple-light: #2d1f6e;
-      --cyan: #22d3ee;
-      --todo-bg: #1a2040; --todo-text: #7ba7f7;
-      --doing-bg: #2a1a40; --doing-text: #c084fc;
-      --done-bg: #0f2e2e; --done-text: #22d3ee;
-      --radius: 14px; --radius-sm: 9px;
+      --bg: #f7f8fc;
+      --white: #ffffff;
+      --border: #e8eaf2;
+      --border2: #d0d4e8;
+      --text: #1a1a2e;
+      --muted: #6b7280;
+      --faint: #9ca3af;
+      --radius: 14px;
+      --radius-sm: 9px;
+      --shadow: 0 2px 12px rgba(99,102,241,0.08);
+      --shadow2: 0 4px 24px rgba(99,102,241,0.13);
+
+      --todo-bg: #eff6ff; --todo-text: #2563eb; --todo-border: #bfdbfe;
+      --prog-bg: #faf5ff; --prog-text: #7c3aed; --prog-border: #ddd6fe;
+      --done-bg: #f0fdf4; --done-text: #16a34a; --done-border: #bbf7d0;
     }
 
     body {
@@ -38,141 +34,185 @@
       padding: 1.5rem 1rem 4rem;
     }
 
-    .container { max-width: 500px; margin: 0 auto; }
+    .container { max-width: 520px; margin: 0 auto; }
 
+    /* Header */
+    .header { margin-bottom: 1.25rem; }
     .app-badge {
-      display: inline-block; font-size: 10px; letter-spacing: 0.15em;
-      text-transform: uppercase; color: var(--purple);
-      background: var(--purple-light); padding: 3px 10px;
-      border-radius: 99px; margin-bottom: 8px;
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: #7c3aed; background: #f3f0ff;
+      padding: 4px 12px; border-radius: 99px; margin-bottom: 10px;
+      font-weight: 600;
     }
-    h1 {
-      font-size: 28px; font-weight: 700; margin-bottom: 2px;
-      background: linear-gradient(90deg, #a78bfa, #4f9cf9, #22d3ee);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    }
-    .subtitle { font-size: 13px; color: var(--muted); margin-bottom: 1.5rem; }
+    h1 { font-size: 26px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+    .subtitle { font-size: 13px; color: var(--muted); }
 
+    /* Date nav */
     .date-nav {
       display: flex; align-items: center; gap: 8px;
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 8px 10px; margin-bottom: 1.25rem;
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 8px 10px;
+      margin-bottom: 1.25rem; box-shadow: var(--shadow);
     }
     .btn-nav {
-      background: var(--card2); border: 1px solid var(--border2);
+      background: var(--bg); border: 1px solid var(--border2);
       border-radius: var(--radius-sm); width: 34px; height: 34px;
       cursor: pointer; font-size: 15px; color: var(--text);
       display: flex; align-items: center; justify-content: center;
     }
-    .btn-nav:hover { background: var(--border2); }
-    .cur-date { flex: 1; text-align: center; font-size: 14px; font-weight: 500; }
+    .btn-nav:hover { background: #eff6ff; border-color: #bfdbfe; }
+    .cur-date { flex: 1; text-align: center; font-size: 14px; font-weight: 600; color: var(--text); }
     .btn-today {
-      background: var(--blue-light); border: 1px solid var(--blue);
+      background: #eff6ff; border: 1px solid #bfdbfe;
       border-radius: var(--radius-sm); padding: 5px 12px;
-      font-size: 12px; cursor: pointer; color: var(--blue); font-family: inherit;
+      font-size: 12px; cursor: pointer; color: #2563eb; font-family: inherit; font-weight: 500;
     }
-    .btn-today:hover { opacity: 0.8; }
+    .btn-today:hover { background: #dbeafe; }
 
+    /* Overview */
     .overview {
-      background: var(--card); border: 1px solid var(--border);
+      background: var(--white); border: 1px solid var(--border);
       border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1rem;
-      display: flex; gap: 1rem; align-items: center;
+      box-shadow: var(--shadow);
     }
-    .pie-wrap { flex-shrink: 0; position: relative; width: 110px; height: 110px; }
+    .overview-title { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1rem; }
+    .overview-body { display: flex; gap: 1.25rem; align-items: center; }
+    .pie-wrap { flex-shrink: 0; position: relative; width: 120px; height: 120px; }
     .pie-center {
       position: absolute; inset: 0;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       pointer-events: none;
     }
-    .pie-pct { font-size: 20px; font-weight: 700; color: var(--cyan); }
-    .pie-label { font-size: 10px; color: var(--muted); }
+    .pie-pct { font-size: 22px; font-weight: 700; color: #7c3aed; }
+    .pie-label { font-size: 10px; color: var(--muted); font-weight: 500; }
+
     .stats-right { flex: 1; display: flex; flex-direction: column; gap: 7px; }
     .stat-row {
       display: flex; align-items: center; justify-content: space-between;
-      background: var(--card2); border-radius: var(--radius-sm); padding: 7px 12px;
+      padding: 8px 12px; border-radius: var(--radius-sm);
     }
-    .stat-dot { width: 8px; height: 8px; border-radius: 50%; margin-right: 8px; flex-shrink: 0; }
-    .stat-row-left { display: flex; align-items: center; font-size: 13px; color: var(--muted); }
-    .stat-num { font-size: 16px; font-weight: 600; }
+    .stat-row-left { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; }
+    .stat-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .stat-num { font-size: 18px; font-weight: 700; }
 
-    .progress-wrap { margin-bottom: 1.25rem; }
-    .progress-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
-    .progress-bar-bg { background: var(--card2); border-radius: 99px; height: 8px; overflow: hidden; }
+    /* Progress */
+    .progress-wrap {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1rem 1.25rem;
+      margin-bottom: 1rem; box-shadow: var(--shadow);
+    }
+    .progress-meta { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; }
+    .progress-meta span:first-child { font-weight: 600; color: var(--text); }
+    .progress-meta span:last-child { color: var(--muted); }
+    .progress-bar-bg { background: #f3f4f6; border-radius: 99px; height: 10px; overflow: hidden; }
     .progress-bar-fill {
-      background: linear-gradient(90deg, #a78bfa, #4f9cf9, #22d3ee);
-      height: 8px; border-radius: 99px; transition: width 0.4s ease;
+      background: linear-gradient(90deg, #7c3aed, #2563eb, #06b6d4);
+      height: 10px; border-radius: 99px; transition: width 0.4s ease;
     }
 
-    .add-form {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 1rem; margin-bottom: 1rem;
-      display: flex; flex-direction: column; gap: 10px;
+    /* Overdue section */
+    .overdue-section {
+      background: #fffbeb; border: 1px solid #fde68a;
+      border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 1rem;
     }
+    .overdue-title {
+      font-size: 12px; font-weight: 700; color: #d97706;
+      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px;
+      display: flex; align-items: center; gap: 6px;
+    }
+
+    /* Add form */
+    .add-form {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.1rem; margin-bottom: 1rem;
+      box-shadow: var(--shadow);
+    }
+    .form-label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
     .add-form input[type=text],
     .add-form input[type=date],
     .add-form select {
       font-size: 14px; font-family: inherit; padding: 9px 13px;
       border: 1px solid var(--border2); border-radius: var(--radius-sm);
-      background: var(--bg2); color: var(--text); outline: none; width: 100%;
+      background: var(--bg); color: var(--text); outline: none; width: 100%;
     }
-    .add-form input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.7); cursor: pointer; }
     .add-form input[type=text]::placeholder { color: var(--faint); }
     .add-form input:focus, .add-form select:focus {
-      border-color: var(--purple); box-shadow: 0 0 0 3px rgba(167,139,250,0.15);
+      border-color: #a78bfa; box-shadow: 0 0 0 3px rgba(167,139,250,0.15);
     }
-    .add-row2 { display: flex; gap: 8px; }
+    .add-row2 { display: flex; gap: 8px; margin-top: 8px; }
     .add-row2 > * { flex: 1; }
     .btn-add {
-      width: 100%; padding: 10px; font-size: 15px; font-family: inherit;
-      font-weight: 600; border: none; border-radius: var(--radius-sm);
-      background: linear-gradient(90deg, #7c3aed, #4f9cf9);
-      color: #fff; cursor: pointer;
+      width: 100%; margin-top: 10px; padding: 11px; font-size: 14px;
+      font-family: inherit; font-weight: 700; border: none;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(90deg, #7c3aed, #2563eb);
+      color: #fff; cursor: pointer; letter-spacing: 0.02em;
     }
-    .btn-add:hover { opacity: 0.88; }
+    .btn-add:hover { opacity: 0.9; }
 
+    /* Filter */
     .filter-tabs { display: flex; gap: 6px; margin-bottom: 1rem; }
     .tab {
-      flex: 1; padding: 7px 4px; font-size: 12px; font-family: inherit;
-      border: 1px solid var(--border2); border-radius: var(--radius-sm);
-      background: var(--card); color: var(--muted); cursor: pointer; text-align: center;
+      flex: 1; padding: 8px 4px; font-size: 12px; font-family: inherit;
+      font-weight: 600; border: 1.5px solid var(--border2);
+      border-radius: var(--radius-sm); background: var(--white);
+      color: var(--muted); cursor: pointer; text-align: center;
     }
-    .tab.active { background: var(--purple-light); border-color: var(--purple); color: var(--purple); font-weight: 600; }
+    .tab.active.f-all { background: #f3f0ff; border-color: #a78bfa; color: #7c3aed; }
+    .tab.active.f-todo { background: var(--todo-bg); border-color: var(--todo-border); color: var(--todo-text); }
+    .tab.active.f-prog { background: var(--prog-bg); border-color: var(--prog-border); color: var(--prog-text); }
+    .tab.active.f-done { background: var(--done-bg); border-color: var(--done-border); color: var(--done-text); }
 
+    /* Todo items */
+    .section-label {
+      font-size: 11px; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.1em;
+      margin: 1rem 0 8px; padding-left: 4px;
+    }
     .todo-list { display: flex; flex-direction: column; gap: 8px; }
     .todo-item {
-      background: var(--card); border: 1px solid var(--border);
+      background: var(--white); border: 1.5px solid var(--border);
       border-radius: var(--radius); padding: 12px 14px;
+      box-shadow: var(--shadow); transition: box-shadow 0.2s, border-color 0.2s;
     }
-    .todo-item.status-done { opacity: 0.58; }
+    .todo-item:hover { box-shadow: var(--shadow2); border-color: var(--border2); }
+    .todo-item.status-done { opacity: 0.55; }
+    .todo-item.is-overdue { border-left: 3px solid #f59e0b; }
+
     .todo-top { display: flex; align-items: flex-start; gap: 10px; }
-    .todo-text { flex: 1; font-size: 15px; color: var(--text); word-break: break-word; line-height: 1.5; }
-    .todo-item.status-done .todo-text { text-decoration: line-through; color: var(--muted); }
+    .todo-text { flex: 1; font-size: 15px; color: var(--text); word-break: break-word; line-height: 1.55; }
+    .todo-item.status-done .todo-text { text-decoration: line-through; color: var(--faint); }
+
     .status-badge {
-      font-size: 11px; padding: 4px 10px; border-radius: 99px; font-weight: 500;
-      flex-shrink: 0; cursor: pointer; border: none; font-family: inherit; white-space: nowrap;
+      font-size: 11px; padding: 4px 11px; border-radius: 99px; font-weight: 700;
+      flex-shrink: 0; cursor: pointer; border: 1.5px solid transparent;
+      font-family: inherit; white-space: nowrap;
     }
-    .badge-todo { background: var(--todo-bg); color: var(--todo-text); }
-    .badge-doing { background: var(--doing-bg); color: var(--doing-text); }
-    .badge-done { background: var(--done-bg); color: var(--done-text); }
-    .btn-del { background: none; border: none; cursor: pointer; color: var(--faint); font-size: 15px; flex-shrink: 0; padding: 0 2px; }
-    .btn-del:hover { color: #f87171; }
-    .todo-meta {
-      display: flex; align-items: center; gap: 8px;
-      margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border);
-    }
-    .due-label { font-size: 11px; color: var(--muted); }
-    .due-date { font-size: 12px; font-weight: 500; padding: 2px 9px; border-radius: 99px; }
-    .due-normal { background: var(--blue-light); color: var(--blue); }
-    .due-soon { background: #2a1f00; color: #fbbf24; }
-    .due-overdue { background: #2a0f0f; color: #f87171; }
-    .empty { text-align: center; color: var(--muted); font-size: 14px; padding: 3rem 0; line-height: 2.5; }
+    .badge-todo { background: var(--todo-bg); color: var(--todo-text); border-color: var(--todo-border); }
+    .badge-inprogress { background: var(--prog-bg); color: var(--prog-text); border-color: var(--prog-border); }
+    .badge-done { background: var(--done-bg); color: var(--done-text); border-color: var(--done-border); }
+
+    .btn-del { background: none; border: none; cursor: pointer; color: var(--faint); font-size: 14px; flex-shrink: 0; padding: 2px 4px; border-radius: 6px; }
+    .btn-del:hover { color: #ef4444; background: #fef2f2; }
+
+    .todo-meta { display: flex; align-items: center; gap: 8px; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); flex-wrap: wrap; }
+    .due-chip { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 99px; }
+    .due-normal { background: #eff6ff; color: #2563eb; }
+    .due-soon { background: #fff7ed; color: #ea580c; }
+    .due-overdue { background: #fef2f2; color: #dc2626; }
+    .overdue-tag { font-size: 10px; font-weight: 700; color: #d97706; background: #fef3c7; padding: 2px 8px; border-radius: 99px; }
+
+    .empty { text-align: center; color: var(--muted); font-size: 14px; padding: 2.5rem 0; line-height: 2.5; }
   </style>
 </head>
 <body>
 <div class="container">
-  <div class="app-badge">Daily Planner</div>
-  <h1>To-Do List</h1>
-  <div class="subtitle">จัดการงานประจำวันของคุณ</div>
+  <div class="header">
+    <div class="app-badge">&#9733; Daily Planner</div>
+    <h1>To-Do List</h1>
+    <div class="subtitle">จัดการงานและติดตามความคืบหน้า</div>
+  </div>
 
   <div class="date-nav">
     <button class="btn-nav" onclick="changeDay(-1)">&#8592;</button>
@@ -181,34 +221,39 @@
     <button class="btn-today" onclick="goToday()">วันนี้</button>
   </div>
 
+  <!-- Global Pie -->
   <div class="overview">
-    <div class="pie-wrap">
-      <canvas id="pieChart" width="110" height="110"></canvas>
-      <div class="pie-center">
-        <div class="pie-pct" id="pie-pct">0%</div>
-        <div class="pie-label">เสร็จ</div>
+    <div class="overview-title">&#9679; ภาพรวมทั้งหมด (ทุกวัน)</div>
+    <div class="overview-body">
+      <div class="pie-wrap">
+        <canvas id="pieChart" width="120" height="120"></canvas>
+        <div class="pie-center">
+          <div class="pie-pct" id="pie-pct">0%</div>
+          <div class="pie-label">Done</div>
+        </div>
       </div>
-    </div>
-    <div class="stats-right">
-      <div class="stat-row">
-        <div class="stat-row-left"><div class="stat-dot" style="background:#4f9cf9"></div>ทั้งหมด</div>
-        <div class="stat-num" id="s-total">0</div>
-      </div>
-      <div class="stat-row">
-        <div class="stat-row-left"><div class="stat-dot" style="background:#22d3ee"></div>เสร็จแล้ว</div>
-        <div class="stat-num" id="s-done">0</div>
-      </div>
-      <div class="stat-row">
-        <div class="stat-row-left"><div class="stat-dot" style="background:#a78bfa"></div>กำลังทำ</div>
-        <div class="stat-num" id="s-doing">0</div>
-      </div>
-      <div class="stat-row">
-        <div class="stat-row-left"><div class="stat-dot" style="background:#60a5fa"></div>ยังไม่เริ่ม</div>
-        <div class="stat-num" id="s-todo">0</div>
+      <div class="stats-right">
+        <div class="stat-row" style="background:#eff6ff">
+          <div class="stat-row-left"><div class="stat-dot" style="background:#2563eb"></div>ทั้งหมด</div>
+          <div class="stat-num" style="color:#2563eb" id="s-total">0</div>
+        </div>
+        <div class="stat-row" style="background:#f0fdf4">
+          <div class="stat-row-left"><div class="stat-dot" style="background:#16a34a"></div>Done</div>
+          <div class="stat-num" style="color:#16a34a" id="s-done">0</div>
+        </div>
+        <div class="stat-row" style="background:#faf5ff">
+          <div class="stat-row-left"><div class="stat-dot" style="background:#7c3aed"></div>In Progress</div>
+          <div class="stat-num" style="color:#7c3aed" id="s-doing">0</div>
+        </div>
+        <div class="stat-row" style="background:#f8faff">
+          <div class="stat-row-left"><div class="stat-dot" style="background:#60a5fa"></div>To Do</div>
+          <div class="stat-num" style="color:#60a5fa" id="s-todo">0</div>
+        </div>
       </div>
     </div>
   </div>
 
+  <!-- Today progress -->
   <div class="progress-wrap">
     <div class="progress-meta">
       <span>ความคืบหน้าวันนี้</span>
@@ -219,25 +264,34 @@
     </div>
   </div>
 
+  <!-- Overdue from other days -->
+  <div class="overdue-section" id="overdue-section" style="display:none">
+    <div class="overdue-title">&#9888; งานค้างจากวันก่อน</div>
+    <div class="todo-list" id="overdue-list"></div>
+  </div>
+
+  <!-- Add form -->
   <div class="add-form">
+    <div class="form-label">&#43; เพิ่มงานใหม่</div>
     <input type="text" id="new-task" placeholder="ชื่องาน / สิ่งที่ต้องทำ..." maxlength="120"
       onkeydown="if(event.key==='Enter')addTask()" />
     <div class="add-row2">
       <select id="new-status">
         <option value="todo">📋 To Do</option>
-        <option value="doing">⚡ กำลังทำ</option>
-        <option value="done">✅ เสร็จแล้ว</option>
+        <option value="inprogress">⚡ In Progress</option>
+        <option value="done">✅ Done</option>
       </select>
       <input type="date" id="new-due" />
     </div>
     <button class="btn-add" onclick="addTask()">+ เพิ่มงาน</button>
   </div>
 
+  <!-- Filter -->
   <div class="filter-tabs">
-    <button class="tab active" onclick="setFilter('all')" id="tab-all">ทั้งหมด</button>
-    <button class="tab" onclick="setFilter('todo')" id="tab-todo">To Do</button>
-    <button class="tab" onclick="setFilter('doing')" id="tab-doing">กำลังทำ</button>
-    <button class="tab" onclick="setFilter('done')" id="tab-done">เสร็จแล้ว</button>
+    <button class="tab f-all active" onclick="setFilter('all')" id="tab-all">ทั้งหมด</button>
+    <button class="tab f-todo" onclick="setFilter('todo')" id="tab-todo">To Do</button>
+    <button class="tab f-prog" onclick="setFilter('inprogress')" id="tab-inprogress">In Progress</button>
+    <button class="tab f-done" onclick="setFilter('done')" id="tab-done">Done</button>
   </div>
 
   <div class="todo-list" id="todo-list"></div>
@@ -245,7 +299,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
-  const STORAGE_KEY = 'todo_v2';
+  const STORAGE_KEY = 'todo_v3';
   let currentDate = new Date();
   let currentFilter = 'all';
   let pieChart = null;
@@ -254,9 +308,10 @@
   const thaiMonths = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
 
   function dateKey(d) { return new Date(d).toISOString().slice(0,10); }
+  function todayKey() { return dateKey(new Date()); }
 
   function formatDate(d) {
-    const isToday = dateKey(d) === dateKey(new Date());
+    const isToday = dateKey(d) === todayKey();
     const label = `วัน${thaiDays[d.getDay()]} ${d.getDate()} ${thaiMonths[d.getMonth()]} ${d.getFullYear()+543}`;
     return isToday ? `วันนี้ — ${label}` : label;
   }
@@ -269,7 +324,7 @@
 
   function getDueClass(str) {
     if (!str) return 'due-normal';
-    const diff = (new Date(str) - new Date(dateKey(new Date()))) / 86400000;
+    const diff = (new Date(str) - new Date(todayKey())) / 86400000;
     if (diff < 0) return 'due-overdue';
     if (diff <= 2) return 'due-soon';
     return 'due-normal';
@@ -277,15 +332,40 @@
 
   function loadAll() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch { return {}; } }
   function saveAll(d) { localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); }
-  function getTasks() { return loadAll()[dateKey(currentDate)] || []; }
-  function saveTasks(tasks) { const a = loadAll(); a[dateKey(currentDate)] = tasks; saveAll(a); }
+  function getTasks(key) { return loadAll()[key || dateKey(currentDate)] || []; }
+  function saveTasks(tasks, key) {
+    const a = loadAll();
+    a[key || dateKey(currentDate)] = tasks;
+    saveAll(a);
+  }
+
+  function getAllTasks() {
+    const all = loadAll();
+    return Object.values(all).flat();
+  }
+
+  function getOverdueTasks() {
+    const all = loadAll();
+    const today = todayKey();
+    const result = [];
+    Object.entries(all).forEach(([day, tasks]) => {
+      if (day >= today) return;
+      tasks.forEach(t => {
+        if (t.status !== 'done') result.push({ ...t, _day: day });
+      });
+    });
+    return result;
+  }
 
   function changeDay(delta) { const d = new Date(currentDate); d.setDate(d.getDate()+delta); currentDate = d; render(); }
   function goToday() { currentDate = new Date(); render(); }
 
   function setFilter(f) {
     currentFilter = f;
-    ['all','todo','doing','done'].forEach(t => document.getElementById('tab-'+t).classList.toggle('active', t===f));
+    ['all','todo','inprogress','done'].forEach(t => {
+      const el = document.getElementById('tab-' + t);
+      if (el) el.classList.toggle('active', t === f);
+    });
     renderList();
   }
 
@@ -302,34 +382,38 @@
     render();
   }
 
-  function cycleStatus(id) {
-    const cycle = { todo:'doing', doing:'done', done:'todo' };
-    saveTasks(getTasks().map(t => t.id===id ? {...t, status: cycle[t.status]} : t));
+  function cycleStatus(id, day) {
+    const cycle = { todo:'inprogress', inprogress:'done', done:'todo' };
+    const key = day || dateKey(currentDate);
+    saveTasks(getTasks(key).map(t => t.id===id ? {...t, status: cycle[t.status]} : t), key);
     render();
   }
 
-  function deleteTask(id) { saveTasks(getTasks().filter(t => t.id!==id)); render(); }
-
-  function statusLabel(s) { return {todo:'📋 To Do', doing:'⚡ กำลังทำ', done:'✅ เสร็จแล้ว'}[s]||s; }
-  function statusClass(s) { return {todo:'badge-todo', doing:'badge-doing', done:'badge-done'}[s]||''; }
-
-  function initPie() {
-    const ctx = document.getElementById('pieChart').getContext('2d');
-    pieChart = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: ['เสร็จแล้ว','กำลังทำ','To Do'],
-        datasets: [{ data: [0,0,1], backgroundColor: ['#22d3ee','#a78bfa','#1e3a6e'], borderColor: '#1e1c35', borderWidth: 3 }]
-      },
-      options: { cutout: '68%', plugins: { legend: { display: false } }, animation: { duration: 500 } }
-    });
+  function deleteTask(id, day) {
+    const key = day || dateKey(currentDate);
+    saveTasks(getTasks(key).filter(t => t.id !== id), key);
+    render();
   }
 
-  function updatePie(done, doing, todo) {
-    const total = done+doing+todo;
-    pieChart.data.datasets[0].data = total===0 ? [0,0,1] : [done,doing,todo];
-    pieChart.update();
-    document.getElementById('pie-pct').textContent = (total>0 ? Math.round((done/total)*100) : 0)+'%';
+  function statusLabel(s) { return {todo:'📋 To Do', inprogress:'⚡ In Progress', done:'✅ Done'}[s]||s; }
+  function statusClass(s) { return {todo:'badge-todo', inprogress:'badge-inprogress', done:'badge-done'}[s]||''; }
+
+  function renderTaskItem(t, day) {
+    const dueStr = formatDueDisplay(t.due);
+    const dueCls = getDueClass(t.due);
+    const isOverdueDay = day && day < todayKey();
+    const meta = dueStr
+      ? `<div class="todo-meta">
+          <span class="due-chip ${dueCls}">${dueStr}</span>
+          ${isOverdueDay ? `<span class="overdue-tag">จากวันก่อน</span>` : ''}
+         </div>`
+      : (isOverdueDay ? `<div class="todo-meta"><span class="overdue-tag">จากวันก่อน</span></div>` : '');
+    return `<div class="todo-item status-${t.status}${isOverdueDay ? ' is-overdue' : ''}">
+      <div class="todo-top">
+        <span class="todo-text">${t.text.replace(/</g,'&lt;')}</span>
+        <button class="status-badge ${statusClass(t.status)}" onclick="cycleStatus(${t.id},'${day||''}')">${statusLabel(t.status)}</button>
+        <button class="btn-del" onclick="deleteTask(${t.id},'${day||''}')">&#10005;</button>
+      </div>${meta}</div>`;
   }
 
   function renderList() {
@@ -337,37 +421,63 @@
     const filtered = currentFilter==='all' ? tasks : tasks.filter(t => t.status===currentFilter);
     const list = document.getElementById('todo-list');
     if (filtered.length===0) {
-      list.innerHTML = '<div class="empty">✨<br>ไม่มีงานในหมวดนี้<br><span style="font-size:13px;color:var(--faint)">เพิ่มงานได้เลย</span></div>';
-      return;
+      list.innerHTML = '<div class="empty">✨<br>ไม่มีงานในหมวดนี้<br><span style="font-size:13px;color:var(--faint)">เพิ่มงานด้านบนได้เลย</span></div>';
+    } else {
+      list.innerHTML = filtered.map(t => renderTaskItem(t, null)).join('');
     }
-    list.innerHTML = filtered.map(t => {
-      const dueStr = formatDueDisplay(t.due);
-      const metaRow = dueStr ? `<div class="todo-meta"><span class="due-label">นัดหมาย:</span><span class="due-date ${getDueClass(t.due)}">${dueStr}</span></div>` : '';
-      return `<div class="todo-item status-${t.status}">
-        <div class="todo-top">
-          <span class="todo-text">${t.text.replace(/</g,'&lt;')}</span>
-          <button class="status-badge ${statusClass(t.status)}" onclick="cycleStatus(${t.id})">${statusLabel(t.status)}</button>
-          <button class="btn-del" onclick="deleteTask(${t.id})">&#10005;</button>
-        </div>${metaRow}</div>`;
-    }).join('');
+  }
+
+  function renderOverdue() {
+    const overdue = getOverdueTasks();
+    const sec = document.getElementById('overdue-section');
+    const list = document.getElementById('overdue-list');
+    if (overdue.length === 0) { sec.style.display = 'none'; return; }
+    sec.style.display = 'block';
+    list.innerHTML = overdue.map(t => renderTaskItem(t, t._day)).join('');
+  }
+
+  function initPie() {
+    const ctx = document.getElementById('pieChart').getContext('2d');
+    pieChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Done','In Progress','To Do'],
+        datasets: [{ data: [0,0,1], backgroundColor: ['#16a34a','#7c3aed','#bfdbfe'], borderColor: '#fff', borderWidth: 3 }]
+      },
+      options: { cutout: '68%', plugins: { legend: { display: false } }, animation: { duration: 500 } }
+    });
   }
 
   function render() {
     document.getElementById('cur-date-label').textContent = formatDate(currentDate);
-    const tasks = getTasks();
-    const total = tasks.length;
-    const done = tasks.filter(t=>t.status==='done').length;
-    const doing = tasks.filter(t=>t.status==='doing').length;
-    const todo = tasks.filter(t=>t.status==='todo').length;
+
+    // Today progress
+    const todayTasks = getTasks();
+    const todayTotal = todayTasks.length;
+    const todayDone = todayTasks.filter(t => t.status==='done').length;
+    const todayPct = todayTotal>0 ? Math.round((todayDone/todayTotal)*100) : 0;
+    document.getElementById('prog-meta').textContent = `${todayDone} / ${todayTotal} งาน`;
+    document.getElementById('progress-bar').style.width = todayPct+'%';
+
+    // Global stats
+    const all = getAllTasks();
+    const total = all.length;
+    const done = all.filter(t=>t.status==='done').length;
+    const doing = all.filter(t=>t.status==='inprogress').length;
+    const todo = all.filter(t=>t.status==='todo').length;
     const pct = total>0 ? Math.round((done/total)*100) : 0;
+
     document.getElementById('s-total').textContent = total;
     document.getElementById('s-done').textContent = done;
     document.getElementById('s-doing').textContent = doing;
     document.getElementById('s-todo').textContent = todo;
-    document.getElementById('prog-meta').textContent = `${done} / ${total} งาน`;
-    document.getElementById('progress-bar').style.width = pct+'%';
-    updatePie(done, doing, todo);
+    document.getElementById('pie-pct').textContent = pct+'%';
+
+    pieChart.data.datasets[0].data = total===0 ? [0,0,1] : [done, doing, todo];
+    pieChart.update();
+
     renderList();
+    renderOverdue();
   }
 
   initPie();
