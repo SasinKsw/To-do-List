@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My To-Do List</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f0e1a;
+      --bg2: #16152a;
+      --card: #1e1c35;
+      --card2: #252343;
+      --border: #2e2b52;
+      --border2: #3d3a6e;
+      --text: #e8e6ff;
+      --muted: #8b88b8;
+      --faint: #5a5880;
+      --blue: #4f9cf9;
+      --blue-light: #1a3560;
+      --purple: #a78bfa;
+      --purple-light: #2d1f6e;
+      --cyan: #22d3ee;
+      --todo-bg: #1a2040; --todo-text: #7ba7f7;
+      --doing-bg: #2a1a40; --doing-text: #c084fc;
+      --done-bg: #0f2e2e; --done-text: #22d3ee;
+      --radius: 14px; --radius-sm: 9px;
+    }
+
+    body {
+      font-family: 'Sarabun', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 1.5rem 1rem 4rem;
+    }
+
+    .container { max-width: 500px; margin: 0 auto; }
+
+    .app-badge {
+      display: inline-block; font-size: 10px; letter-spacing: 0.15em;
+      text-transform: uppercase; color: var(--purple);
+      background: var(--purple-light); padding: 3px 10px;
+      border-radius: 99px; margin-bottom: 8px;
+    }
+    h1 {
+      font-size: 28px; font-weight: 700; margin-bottom: 2px;
+      background: linear-gradient(90deg, #a78bfa, #4f9cf9, #22d3ee);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .subtitle { font-size: 13px; color: var(--muted); margin-bottom: 1.5rem; }
+
+    .date-nav {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 8px 10px; margin-bottom: 1.25rem;
+    }
+    .btn-nav {
+      background: var(--card2); border: 1px solid var(--border2);
+      border-radius: var(--radius-sm); width: 34px; height: 34px;
+      cursor: pointer; font-size: 15px; color: var(--text);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .btn-nav:hover { background: var(--border2); }
+    .cur-date { flex: 1; text-align: center; font-size: 14px; font-weight: 500; }
+    .btn-today {
+      background: var(--blue-light); border: 1px solid var(--blue);
+      border-radius: var(--radius-sm); padding: 5px 12px;
+      font-size: 12px; cursor: pointer; color: var(--blue); font-family: inherit;
+    }
+    .btn-today:hover { opacity: 0.8; }
+
+    .overview {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1rem;
+      display: flex; gap: 1rem; align-items: center;
+    }
+    .pie-wrap { flex-shrink: 0; position: relative; width: 110px; height: 110px; }
+    .pie-center {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      pointer-events: none;
+    }
+    .pie-pct { font-size: 20px; font-weight: 700; color: var(--cyan); }
+    .pie-label { font-size: 10px; color: var(--muted); }
+    .stats-right { flex: 1; display: flex; flex-direction: column; gap: 7px; }
+    .stat-row {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--card2); border-radius: var(--radius-sm); padding: 7px 12px;
+    }
+    .stat-dot { width: 8px; height: 8px; border-radius: 50%; margin-right: 8px; flex-shrink: 0; }
+    .stat-row-left { display: flex; align-items: center; font-size: 13px; color: var(--muted); }
+    .stat-num { font-size: 16px; font-weight: 600; }
+
+    .progress-wrap { margin-bottom: 1.25rem; }
+    .progress-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+    .progress-bar-bg { background: var(--card2); border-radius: 99px; height: 8px; overflow: hidden; }
+    .progress-bar-fill {
+      background: linear-gradient(90deg, #a78bfa, #4f9cf9, #22d3ee);
+      height: 8px; border-radius: 99px; transition: width 0.4s ease;
+    }
+
+    .add-form {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1rem; margin-bottom: 1rem;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .add-form input[type=text],
+    .add-form input[type=date],
+    .add-form select {
+      font-size: 14px; font-family: inherit; padding: 9px 13px;
+      border: 1px solid var(--border2); border-radius: var(--radius-sm);
+      background: var(--bg2); color: var(--text); outline: none; width: 100%;
+    }
+    .add-form input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.7); cursor: pointer; }
+    .add-form input[type=text]::placeholder { color: var(--faint); }
+    .add-form input:focus, .add-form select:focus {
+      border-color: var(--purple); box-shadow: 0 0 0 3px rgba(167,139,250,0.15);
+    }
+    .add-row2 { display: flex; gap: 8px; }
+    .add-row2 > * { flex: 1; }
+    .btn-add {
+      width: 100%; padding: 10px; font-size: 15px; font-family: inherit;
+      font-weight: 600; border: none; border-radius: var(--radius-sm);
+      background: linear-gradient(90deg, #7c3aed, #4f9cf9);
+      color: #fff; cursor: pointer;
+    }
+    .btn-add:hover { opacity: 0.88; }
+
+    .filter-tabs { display: flex; gap: 6px; margin-bottom: 1rem; }
+    .tab {
+      flex: 1; padding: 7px 4px; font-size: 12px; font-family: inherit;
+      border: 1px solid var(--border2); border-radius: var(--radius-sm);
+      background: var(--card); color: var(--muted); cursor: pointer; text-align: center;
+    }
+    .tab.active { background: var(--purple-light); border-color: var(--purple); color: var(--purple); font-weight: 600; }
+
+    .todo-list { display: flex; flex-direction: column; gap: 8px; }
+    .todo-item {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 12px 14px;
+    }
+    .todo-item.status-done { opacity: 0.58; }
+    .todo-top { display: flex; align-items: flex-start; gap: 10px; }
+    .todo-text { flex: 1; font-size: 15px; color: var(--text); word-break: break-word; line-height: 1.5; }
+    .todo-item.status-done .todo-text { text-decoration: line-through; color: var(--muted); }
+    .status-badge {
+      font-size: 11px; padding: 4px 10px; border-radius: 99px; font-weight: 500;
+      flex-shrink: 0; cursor: pointer; border: none; font-family: inherit; white-space: nowrap;
+    }
+    .badge-todo { background: var(--todo-bg); color: var(--todo-text); }
+    .badge-doing { background: var(--doing-bg); color: var(--doing-text); }
+    .badge-done { background: var(--done-bg); color: var(--done-text); }
+    .btn-del { background: none; border: none; cursor: pointer; color: var(--faint); font-size: 15px; flex-shrink: 0; padding: 0 2px; }
+    .btn-del:hover { color: #f87171; }
+    .todo-meta {
+      display: flex; align-items: center; gap: 8px;
+      margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border);
+    }
+    .due-label { font-size: 11px; color: var(--muted); }
+    .due-date { font-size: 12px; font-weight: 500; padding: 2px 9px; border-radius: 99px; }
+    .due-normal { background: var(--blue-light); color: var(--blue); }
+    .due-soon { background: #2a1f00; color: #fbbf24; }
+    .due-overdue { background: #2a0f0f; color: #f87171; }
+    .empty { text-align: center; color: var(--muted); font-size: 14px; padding: 3rem 0; line-height: 2.5; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="app-badge">Daily Planner</div>
+  <h1>To-Do List</h1>
+  <div class="subtitle">จัดการงานประจำวันของคุณ</div>
+
+  <div class="date-nav">
+    <button class="btn-nav" onclick="changeDay(-1)">&#8592;</button>
+    <div class="cur-date" id="cur-date-label"></div>
+    <button class="btn-nav" onclick="changeDay(1)">&#8594;</button>
+    <button class="btn-today" onclick="goToday()">วันนี้</button>
+  </div>
+
+  <div class="overview">
+    <div class="pie-wrap">
+      <canvas id="pieChart" width="110" height="110"></canvas>
+      <div class="pie-center">
+        <div class="pie-pct" id="pie-pct">0%</div>
+        <div class="pie-label">เสร็จ</div>
+      </div>
+    </div>
+    <div class="stats-right">
+      <div class="stat-row">
+        <div class="stat-row-left"><div class="stat-dot" style="background:#4f9cf9"></div>ทั้งหมด</div>
+        <div class="stat-num" id="s-total">0</div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-row-left"><div class="stat-dot" style="background:#22d3ee"></div>เสร็จแล้ว</div>
+        <div class="stat-num" id="s-done">0</div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-row-left"><div class="stat-dot" style="background:#a78bfa"></div>กำลังทำ</div>
+        <div class="stat-num" id="s-doing">0</div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-row-left"><div class="stat-dot" style="background:#60a5fa"></div>ยังไม่เริ่ม</div>
+        <div class="stat-num" id="s-todo">0</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-meta">
+      <span>ความคืบหน้าวันนี้</span>
+      <span id="prog-meta">0 / 0 งาน</span>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progress-bar" style="width:0%"></div>
+    </div>
+  </div>
+
+  <div class="add-form">
+    <input type="text" id="new-task" placeholder="ชื่องาน / สิ่งที่ต้องทำ..." maxlength="120"
+      onkeydown="if(event.key==='Enter')addTask()" />
+    <div class="add-row2">
+      <select id="new-status">
+        <option value="todo">📋 To Do</option>
+        <option value="doing">⚡ กำลังทำ</option>
+        <option value="done">✅ เสร็จแล้ว</option>
+      </select>
+      <input type="date" id="new-due" />
+    </div>
+    <button class="btn-add" onclick="addTask()">+ เพิ่มงาน</button>
+  </div>
+
+  <div class="filter-tabs">
+    <button class="tab active" onclick="setFilter('all')" id="tab-all">ทั้งหมด</button>
+    <button class="tab" onclick="setFilter('todo')" id="tab-todo">To Do</button>
+    <button class="tab" onclick="setFilter('doing')" id="tab-doing">กำลังทำ</button>
+    <button class="tab" onclick="setFilter('done')" id="tab-done">เสร็จแล้ว</button>
+  </div>
+
+  <div class="todo-list" id="todo-list"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+  const STORAGE_KEY = 'todo_v2';
+  let currentDate = new Date();
+  let currentFilter = 'all';
+  let pieChart = null;
+
+  const thaiDays = ['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
+  const thaiMonths = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+
+  function dateKey(d) { return new Date(d).toISOString().slice(0,10); }
+
+  function formatDate(d) {
+    const isToday = dateKey(d) === dateKey(new Date());
+    const label = `วัน${thaiDays[d.getDay()]} ${d.getDate()} ${thaiMonths[d.getMonth()]} ${d.getFullYear()+543}`;
+    return isToday ? `วันนี้ — ${label}` : label;
+  }
+
+  function formatDueDisplay(str) {
+    if (!str) return null;
+    const d = new Date(str + 'T00:00:00');
+    return `${d.getDate()} ${thaiMonths[d.getMonth()]} ${d.getFullYear()+543}`;
+  }
+
+  function getDueClass(str) {
+    if (!str) return 'due-normal';
+    const diff = (new Date(str) - new Date(dateKey(new Date()))) / 86400000;
+    if (diff < 0) return 'due-overdue';
+    if (diff <= 2) return 'due-soon';
+    return 'due-normal';
+  }
+
+  function loadAll() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch { return {}; } }
+  function saveAll(d) { localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); }
+  function getTasks() { return loadAll()[dateKey(currentDate)] || []; }
+  function saveTasks(tasks) { const a = loadAll(); a[dateKey(currentDate)] = tasks; saveAll(a); }
+
+  function changeDay(delta) { const d = new Date(currentDate); d.setDate(d.getDate()+delta); currentDate = d; render(); }
+  function goToday() { currentDate = new Date(); render(); }
+
+  function setFilter(f) {
+    currentFilter = f;
+    ['all','todo','doing','done'].forEach(t => document.getElementById('tab-'+t).classList.toggle('active', t===f));
+    renderList();
+  }
+
+  function addTask() {
+    const input = document.getElementById('new-task');
+    const text = input.value.trim();
+    if (!text) return;
+    const tasks = getTasks();
+    tasks.push({ id: Date.now(), text, status: document.getElementById('new-status').value, due: document.getElementById('new-due').value });
+    saveTasks(tasks);
+    input.value = '';
+    document.getElementById('new-due').value = '';
+    document.getElementById('new-status').value = 'todo';
+    render();
+  }
+
+  function cycleStatus(id) {
+    const cycle = { todo:'doing', doing:'done', done:'todo' };
+    saveTasks(getTasks().map(t => t.id===id ? {...t, status: cycle[t.status]} : t));
+    render();
+  }
+
+  function deleteTask(id) { saveTasks(getTasks().filter(t => t.id!==id)); render(); }
+
+  function statusLabel(s) { return {todo:'📋 To Do', doing:'⚡ กำลังทำ', done:'✅ เสร็จแล้ว'}[s]||s; }
+  function statusClass(s) { return {todo:'badge-todo', doing:'badge-doing', done:'badge-done'}[s]||''; }
+
+  function initPie() {
+    const ctx = document.getElementById('pieChart').getContext('2d');
+    pieChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['เสร็จแล้ว','กำลังทำ','To Do'],
+        datasets: [{ data: [0,0,1], backgroundColor: ['#22d3ee','#a78bfa','#1e3a6e'], borderColor: '#1e1c35', borderWidth: 3 }]
+      },
+      options: { cutout: '68%', plugins: { legend: { display: false } }, animation: { duration: 500 } }
+    });
+  }
+
+  function updatePie(done, doing, todo) {
+    const total = done+doing+todo;
+    pieChart.data.datasets[0].data = total===0 ? [0,0,1] : [done,doing,todo];
+    pieChart.update();
+    document.getElementById('pie-pct').textContent = (total>0 ? Math.round((done/total)*100) : 0)+'%';
+  }
+
+  function renderList() {
+    const tasks = getTasks();
+    const filtered = currentFilter==='all' ? tasks : tasks.filter(t => t.status===currentFilter);
+    const list = document.getElementById('todo-list');
+    if (filtered.length===0) {
+      list.innerHTML = '<div class="empty">✨<br>ไม่มีงานในหมวดนี้<br><span style="font-size:13px;color:var(--faint)">เพิ่มงานได้เลย</span></div>';
+      return;
+    }
+    list.innerHTML = filtered.map(t => {
+      const dueStr = formatDueDisplay(t.due);
+      const metaRow = dueStr ? `<div class="todo-meta"><span class="due-label">นัดหมาย:</span><span class="due-date ${getDueClass(t.due)}">${dueStr}</span></div>` : '';
+      return `<div class="todo-item status-${t.status}">
+        <div class="todo-top">
+          <span class="todo-text">${t.text.replace(/</g,'&lt;')}</span>
+          <button class="status-badge ${statusClass(t.status)}" onclick="cycleStatus(${t.id})">${statusLabel(t.status)}</button>
+          <button class="btn-del" onclick="deleteTask(${t.id})">&#10005;</button>
+        </div>${metaRow}</div>`;
+    }).join('');
+  }
+
+  function render() {
+    document.getElementById('cur-date-label').textContent = formatDate(currentDate);
+    const tasks = getTasks();
+    const total = tasks.length;
+    const done = tasks.filter(t=>t.status==='done').length;
+    const doing = tasks.filter(t=>t.status==='doing').length;
+    const todo = tasks.filter(t=>t.status==='todo').length;
+    const pct = total>0 ? Math.round((done/total)*100) : 0;
+    document.getElementById('s-total').textContent = total;
+    document.getElementById('s-done').textContent = done;
+    document.getElementById('s-doing').textContent = doing;
+    document.getElementById('s-todo').textContent = todo;
+    document.getElementById('prog-meta').textContent = `${done} / ${total} งาน`;
+    document.getElementById('progress-bar').style.width = pct+'%';
+    updatePie(done, doing, todo);
+    renderList();
+  }
+
+  initPie();
+  render();
+</script>
+</body>
+</html>
