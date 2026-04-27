@@ -233,15 +233,29 @@
   function changeDay(n) { curDate.setDate(curDate.getDate() + n); render(); }
   function goToday() { curDate = new Date(); render(); }
   function exportData() {
-    const blob = new Blob([JSON.stringify(loadFromLocal())], {type:'application/json'});
-    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'backup.json'; a.click();
-  }
-  function importData(e) {
-    const file = e.target.files[0];
-    const reader = new FileReader();
-    reader.onload = (ev) => { saveToLocal(JSON.parse(ev.target.result)); render(); };
-    reader.readAsText(file);
-  }
+    try {
+        const data = JSON.stringify(loadFromLocal(), null, 2);
+        // กำหนด MIME Type เป็น application/octet-stream เพื่อบังคับให้ Safari ดาวน์โหลดแทนการเปิดอ่าน
+        const blob = new Blob([data], { type: 'application/octet-stream' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        
+        a.href = url;
+        a.download = `todo-backup-${dKey(new Date())}.json`;
+        
+        // สำหรับ Safari บน iOS: ต้องเพิ่ม Element เข้าไปใน Document ก่อนสั่งคลิก
+        document.body.appendChild(a);
+        a.click();
+        
+        // ล้างข้อมูลหลังใช้งาน
+        setTimeout(() => {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }, 100);
+    } catch (err) {
+        alert("ไม่สามารถส่งออกข้อมูลได้ในเบราว์เซอร์นี้");
+    }
+}
 
   window.onload = render;
 </script>
