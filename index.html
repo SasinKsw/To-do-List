@@ -3,196 +3,101 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Daily Planner Pro</title>
+  <title>Daily Planner Pro v3.1</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --bg: #f7f8fc;
-      --white: #ffffff;
-      --border: #e8eaf2;
-      --border2: #d0d4e8;
-      --text: #1a1a2e;
-      --muted: #6b7280;
-      --faint: #9ca3af;
-      --radius: 14px;
-      --radius-sm: 9px;
-      --shadow: 0 2px 12px rgba(99,102,241,0.08);
-      --shadow2: 0 4px 24px rgba(99,102,241,0.13);
+      --bg: #f7f8fc; --white: #ffffff; --border: #e8eaf2; --border2: #d0d4e8;
+      --text: #1a1a2e; --muted: #6b7280; --radius: 14px; --radius-sm: 9px;
       --todo-bg: #eff6ff; --todo-text: #2563eb; --todo-border: #bfdbfe;
       --prog-bg: #faf5ff; --prog-text: #7c3aed; --prog-border: #ddd6fe;
       --done-bg: #f0fdf4; --done-text: #16a34a; --done-border: #bbf7d0;
     }
-
-    body {
-      font-family: 'Sarabun', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      padding: 1.5rem 1rem 4rem;
-    }
-
-    .container { max-width: 520px; margin: 0 auto; }
-
+    body { font-family: 'Sarabun', sans-serif; background: var(--bg); color: var(--text); padding: 1.5rem 1rem 4rem; }
+    .container { max-width: 500px; margin: 0 auto; }
     .header { margin-bottom: 1.25rem; }
-    .app-badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
-      color: #7c3aed; background: #f3f0ff;
-      padding: 4px 12px; border-radius: 99px; margin-bottom: 10px;
-      font-weight: 600;
-    }
-    h1 { font-size: 26px; font-weight: 700; color: var(--text); }
-    .subtitle { font-size: 13px; color: var(--muted); margin-bottom: 1rem; }
-
-    /* Backup Buttons */
+    .app-badge { display: inline-flex; font-size: 11px; color: #7c3aed; background: #f3f0ff; padding: 4px 12px; border-radius: 99px; margin-bottom: 8px; font-weight: 600; }
+    
+    /* Backup/Date Nav */
     .backup-row { display: flex; gap: 8px; margin-bottom: 1rem; }
-    .btn-backup {
-      flex: 1; padding: 10px; font-size: 12px; font-weight: 600;
-      background: var(--white); border: 1px solid var(--border2);
-      border-radius: var(--radius-sm); cursor: pointer; color: var(--muted);
-      font-family: inherit;
-    }
+    .btn-action { flex: 1; padding: 10px; font-size: 12px; font-weight: 600; background: white; border: 1px solid var(--border2); border-radius: 8px; cursor: pointer; font-family: inherit; }
+    .date-nav { display: flex; align-items: center; gap: 8px; background: white; border-radius: var(--radius); padding: 10px; margin-bottom: 1.25rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+    .btn-nav { width: 34px; height: 34px; border: 1px solid var(--border2); border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; background: white; }
+    .cur-date { flex: 1; text-align: center; font-size: 14px; font-weight: 700; }
 
-    /* Date nav */
-    .date-nav {
-      display: flex; align-items: center; gap: 8px;
-      background: var(--white); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 8px 10px;
-      margin-bottom: 1.25rem; box-shadow: var(--shadow);
-    }
-    .btn-nav {
-      background: var(--bg); border: 1px solid var(--border2);
-      border-radius: var(--radius-sm); width: 34px; height: 34px;
-      cursor: pointer; font-size: 15px; display: flex; align-items: center; justify-content: center;
-    }
-    .cur-date { flex: 1; text-align: center; font-size: 14px; font-weight: 600; }
-    .btn-today {
-      background: #eff6ff; border: 1px solid #bfdbfe;
-      border-radius: var(--radius-sm); padding: 5px 12px;
-      font-size: 12px; cursor: pointer; color: #2563eb; font-weight: 500; font-family: inherit;
-    }
-
-    /* Stats Overview */
-    .overview {
-      background: var(--white); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1rem;
-      box-shadow: var(--shadow);
-    }
-    .overview-body { display: flex; gap: 1.25rem; align-items: center; }
-    .pie-wrap { position: relative; width: 100px; height: 100px; }
-    .pie-center {
-      position: absolute; inset: 0; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; pointer-events: none;
-    }
-    .pie-pct { font-size: 20px; font-weight: 700; color: #7c3aed; }
+    /* Stats & Progress */
+    .overview { background: white; border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+    .overview-body { display: flex; gap: 1rem; align-items: center; }
+    #myChart { max-width: 100px; max-height: 100px; }
     .stats-right { flex: 1; display: flex; flex-direction: column; gap: 6px; }
     .stat-row { display: flex; justify-content: space-between; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; }
+    .progress-bar-bg { background: #f3f4f6; border-radius: 99px; height: 8px; overflow: hidden; margin-top: 5px; }
+    .progress-bar-fill { background: linear-gradient(90deg, #7c3aed, #2563eb); height: 100%; transition: width 0.4s; }
 
-    /* Progress bar */
-    .progress-wrap {
-      background: var(--white); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 1rem; margin-bottom: 1rem;
-    }
-    .progress-bar-bg { background: #f3f4f6; border-radius: 99px; height: 10px; overflow: hidden; margin-top: 8px; }
-    .progress-bar-fill { background: linear-gradient(90deg, #7c3aed, #2563eb); height: 10px; transition: width 0.4s; }
-
-    /* Form */
-    .add-form { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.1rem; margin-bottom: 1rem; }
-    .add-form input, .add-form select {
-      width: 100%; padding: 10px; margin-bottom: 8px; border: 1px solid var(--border2);
-      border-radius: var(--radius-sm); font-family: inherit; font-size: 14px; outline: none;
-    }
-    .add-row { display: flex; gap: 8px; }
-    .btn-add {
-      width: 100%; padding: 12px; border: none; border-radius: var(--radius-sm);
-      background: linear-gradient(90deg, #7c3aed, #2563eb); color: white;
-      font-weight: 700; cursor: pointer; font-family: inherit; margin-top: 5px;
-    }
-
-    /* List */
-    .todo-item { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; margin-bottom: 8px; box-shadow: var(--shadow); }
-    .cat-label { font-size: 10px; font-weight: 800; color: #7c3aed; margin-bottom: 4px; display: block; }
-    .todo-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
-    .todo-text { flex: 1; font-size: 15px; }
-    .badge { padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 700; border: 1px solid transparent; cursor: pointer; }
+    /* Form & Items */
+    .add-form { background: white; border-radius: var(--radius); padding: 1rem; margin-bottom: 1rem; border: 1px solid var(--border); }
+    .add-form input, .add-form select { width: 100%; padding: 10px; margin-bottom: 8px; border: 1px solid var(--border2); border-radius: 8px; font-family: inherit; }
+    .btn-add { width: 100%; padding: 12px; border: none; border-radius: 8px; background: #2563eb; color: white; font-weight: 700; cursor: pointer; font-family: inherit; }
+    .todo-item { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin-bottom: 8px; }
+    .badge { padding: 4px 8px; border-radius: 99px; font-size: 10px; font-weight: 700; cursor: pointer; border: 1px solid transparent; }
     .badge-todo { background: var(--todo-bg); color: var(--todo-text); border-color: var(--todo-border); }
     .badge-inprogress { background: var(--prog-bg); color: var(--prog-text); border-color: var(--prog-border); }
     .badge-done { background: var(--done-bg); color: var(--done-text); border-color: var(--done-border); }
-
-    .btn-history { width: 100%; padding: 10px; background: #059669; color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; margin-bottom: 1rem; font-family: inherit; }
-    .history-list { display: none; background: white; border: 1px solid var(--border); border-radius: 12px; padding: 1rem; margin-bottom: 1rem; max-height: 200px; overflow-y: auto; }
-    .overdue-box { background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 1rem; margin-bottom: 1rem; }
+    
+    .history-box { display: none; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1rem; margin-bottom: 1rem; max-height: 200px; overflow-y: auto; font-size: 12px; }
   </style>
 </head>
 <body>
 
 <div class="container">
   <div class="header">
-    <div class="app-badge">Planner v3</div>
+    <div class="app-badge">Stable Build 3.1</div>
     <h1>To-Do List</h1>
-    <p class="subtitle">บันทึกงานและสำรองข้อมูลได้ทุกที่</p>
   </div>
 
   <div class="backup-row">
-    <button class="btn-backup" onclick="exportData()">📤 Backup (ส่งออก)</button>
-    <button class="btn-backup" onclick="document.getElementById('fileIn').click()">📥 Restore (นำเข้า)</button>
-    <input type="file" id="fileIn" style="display:none" onchange="importData(event)" accept=".json">
+    <button class="btn-action" onclick="exportData()">📤 Backup</button>
+    <button class="btn-action" onclick="document.getElementById('fileIn').click()">📥 Restore</button>
+    <input type="file" id="fileIn" style="display:none" onchange="importData(event)">
   </div>
 
   <div class="date-nav">
     <button class="btn-nav" onclick="changeDay(-1)">←</button>
-    <div class="cur-date" id="dateLabel"></div>
+    <div class="cur-date" id="dateLabel">กำลังโหลด...</div>
     <button class="btn-nav" onclick="changeDay(1)">→</button>
-    <button class="btn-today" onclick="goToday()">วันนี้</button>
+    <button onclick="goToday()" style="font-size:11px; cursor:pointer; background:none; border:none; color:#2563eb; font-weight:700;">วันนี้</button>
   </div>
 
   <div class="overview">
     <div class="overview-body">
-      <div class="pie-wrap">
-        <canvas id="myChart"></canvas>
-        <div class="pie-center"><div class="pie-pct" id="totalPct">0%</div></div>
-      </div>
+      <canvas id="myChart"></canvas>
       <div class="stats-right">
         <div class="stat-row" style="background:#eff6ff"><span>ทั้งหมด</span><span id="statAll">0</span></div>
         <div class="stat-row" style="background:#f0fdf4"><span>สำเร็จ</span><span id="statDone">0</span></div>
+        <div style="font-size:10px; color:gray; text-align:right">ความสำเร็จ: <b id="totalPct">0%</b></div>
       </div>
     </div>
   </div>
 
-  <div class="progress-wrap">
-    <div style="display:flex; justify-content:space-between; font-size:13px;">
-      <span>ความคืบหน้าวันนี้</span>
-      <span id="todayCount">0/0</span>
-    </div>
-    <div class="progress-bar-bg"><div class="progress-bar-fill" id="todayBar" style="width:0%"></div></div>
-  </div>
-
-  <button class="btn-history" onclick="toggleHistory()">📊 ดูงานที่สำเร็จแล้วทั้งหมด</button>
-  <div id="historyBox" class="history-list"></div>
-
-  <div id="overdueBox" class="overdue-box" style="display:none">
-    <p style="font-size:12px; font-weight:700; color:#d97706; margin-bottom:8px;">⚠️ งานค้างจากวันก่อน</p>
-    <div id="overdueItems"></div>
-  </div>
+  <button class="btn-action" style="width:100%; margin-bottom:1rem; background:#059669; color:white; border:none;" onclick="toggleHistory()">📊 ดูประวัติงานที่สำเร็จแล้ว</button>
+  <div id="historyBox" class="history-box"></div>
 
   <div class="add-form">
-    <input type="text" id="taskInput" placeholder="สิ่งที่ต้องทำ..." maxlength="100">
-    <div class="add-row">
+    <input type="text" id="taskInput" placeholder="สิ่งที่ต้องทำวันนี้...">
+    <div style="display:flex; gap:8px;">
       <select id="catInput">
-        <option value="Personal">🔒 Personal</option>
-        <option value="Work">💼 Work</option>
-        <option value="Family">🏠 Family</option>
-        <option value="Couple">❤️ Couple</option>
+        <option value="Personal">Personal</option>
+        <option value="Work">Work</option>
+        <option value="Family">Family</option>
+        <option value="Couple">Couple</option>
       </select>
       <select id="statusInput">
-        <option value="todo">📋 To Do</option>
-        <option value="inprogress">⚡ Doing</option>
-        <option value="done">✅ Done</option>
+        <option value="todo">To Do</option>
+        <option value="inprogress">Doing</option>
+        <option value="done">Done</option>
       </select>
     </div>
-    <input type="date" id="dueInput">
     <button class="btn-add" onclick="addTask()">+ เพิ่มรายการ</button>
   </div>
 
@@ -201,149 +106,141 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-  const KEY = 'todo_v3_final';
+  // ชื่อ KEY ต้องไม่เปลี่ยนเพื่อให้จำข้อมูลได้
+  const STORAGE_KEY = 'MY_PERSISTENT_TODO_APP_V3';
   let curDate = new Date();
-  let chart = null;
+  let myChart = null;
+
+  // ฟังก์ชันบันทึกข้อมูลลงเครื่อง
+  function saveToLocal(data) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }
+
+  // ฟังก์ชันดึงข้อมูลจากเครื่อง
+  function loadFromLocal() {
+    const data = localStorage.getItem(STORAGE_KEY);
+    return data ? JSON.parse(data) : {};
+  }
 
   function dKey(d) { return d.toISOString().split('T')[0]; }
-  function load() { return JSON.parse(localStorage.getItem(KEY)) || {}; }
-  function save(data) { localStorage.setItem(KEY, JSON.stringify(data)); }
 
-  function changeDay(n) { curDate.setDate(curDate.getDate() + n); render(); }
-  function goToday() { curDate = new Date(); render(); }
+  function render() {
+    const data = loadFromLocal();
+    const k = dKey(curDate);
+    const tasks = data[k] || [];
+    
+    // แสดงวันที่
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    document.getElementById('dateLabel').innerText = curDate.toLocaleDateString('th-TH', options);
+
+    // วาดรายการ
+    const itemsDiv = document.getElementById('listItems');
+    itemsDiv.innerHTML = tasks.length ? tasks.map(t => `
+      <div class="todo-item" style="${t.status==='done'?'opacity:0.6':''}">
+        <div style="font-size:10px; font-weight:700; color:#7c3aed;">[${t.cat}]</div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="${t.status==='done'?'text-decoration:line-through':''}">${t.text}</span>
+          <div style="display:flex; gap:5px; align-items:center;">
+             <span class="badge badge-${t.status}" onclick="cycleStatus('${t.id}')">${t.status.toUpperCase()}</span>
+             <button onclick="deleteTask('${t.id}')" style="border:none; background:none; color:red; cursor:pointer;">✕</button>
+          </div>
+        </div>
+      </div>
+    `).join('') : '<p style="text-align:center; color:gray; font-size:12px; padding:20px;">ไม่มีรายการสำหรับวันนี้</p>';
+
+    updateStats();
+  }
 
   function addTask() {
-    const txt = document.getElementById('taskInput').value.trim();
-    if(!txt) return;
-    const data = load();
+    const input = document.getElementById('taskInput');
+    if(!input.value.trim()) return;
+    
+    const data = loadFromLocal();
     const k = dKey(curDate);
     if(!data[k]) data[k] = [];
+    
     data[k].push({
-      id: Date.now(),
-      text: txt,
+      id: 'id' + Date.now(),
+      text: input.value,
       cat: document.getElementById('catInput').value,
-      status: document.getElementById('statusInput').value,
-      due: document.getElementById('dueInput').value
+      status: document.getElementById('statusInput').value
     });
-    save(data);
-    document.getElementById('taskInput').value = '';
+    
+    saveToLocal(data);
+    input.value = '';
     render();
   }
 
-  function updateStatus(id, day) {
-    const data = load();
-    const k = day || dKey(curDate);
-    const cycle = {todo:'inprogress', inprogress:'done', done:'todo'};
-    data[k] = data[k].map(t => t.id === id ? {...t, status: cycle[t.status]} : t);
-    save(data);
+  function cycleStatus(id) {
+    const data = loadFromLocal();
+    const k = dKey(curDate);
+    const cycles = { todo: 'inprogress', inprogress: 'done', done: 'todo' };
+    data[k] = data[k].map(t => t.id === id ? {...t, status: cycles[t.status]} : t);
+    saveToLocal(data);
     render();
   }
 
-  function delTask(id, day) {
+  function deleteTask(id) {
     if(!confirm('ลบรายการนี้?')) return;
-    const data = load();
-    const k = day || dKey(curDate);
+    const data = loadFromLocal();
+    const k = dKey(curDate);
     data[k] = data[k].filter(t => t.id !== id);
-    save(data);
+    saveToLocal(data);
     render();
   }
 
-  function exportData() {
-    const blob = new Blob([localStorage.getItem(KEY)], {type:'application/json'});
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `todo-backup-${dKey(new Date())}.json`;
-    a.click();
-  }
+  function updateStats() {
+    const data = loadFromLocal();
+    let all = 0, done = 0, doing = 0, todo = 0;
+    
+    Object.values(data).flat().forEach(t => {
+      all++;
+      if(t.status === 'done') done++;
+      else if(t.status === 'inprogress') doing++;
+      else todo++;
+    });
 
-  function importData(e) {
-    const file = e.target.files[0];
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      try {
-        const json = JSON.parse(ev.target.result);
-        if(confirm('นำเข้าข้อมูลใหม่และลบของเดิม?')) { save(json); render(); }
-      } catch(err) { alert('ไฟล์ไม่ถูกต้อง'); }
-    };
-    reader.readAsText(file);
+    document.getElementById('statAll').innerText = all;
+    document.getElementById('statDone').innerText = done;
+    document.getElementById('totalPct').innerText = all ? Math.round(done/all*100)+'%' : '0%';
+
+    if(!myChart) {
+      const ctx = document.getElementById('myChart').getContext('2d');
+      myChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: { datasets: [{ data: [0,0,1], backgroundColor: ['#16a34a','#7c3aed','#bfdbfe'], borderWidth: 0 }] },
+        options: { cutout: '75%', plugins: { legend: { display: false } } }
+      });
+    }
+    myChart.data.datasets[0].data = all ? [done, doing, todo] : [0,0,1];
+    myChart.update();
   }
 
   function toggleHistory() {
     const box = document.getElementById('historyBox');
     if(box.style.display === 'block') { box.style.display = 'none'; return; }
-    const data = load();
+    const data = loadFromLocal();
     let html = '';
-    Object.keys(data).forEach(k => {
-      data[k].forEach(t => {
-        if(t.status === 'done') html += `<div style="font-size:12px; padding:4px 0; border-bottom:1px solid #eee;">✅ <b>[${t.cat}]</b> ${t.text} <small style="color:#999">(${k})</small></div>`;
+    Object.keys(data).forEach(day => {
+      data[day].forEach(t => {
+        if(t.status === 'done') html += `<div>✅ <b>${t.text}</b> <small>(${day})</small></div>`;
       });
     });
-    box.innerHTML = html || 'ยังไม่มีงานที่สำเร็จ';
+    box.innerHTML = html || 'ยังไม่มีประวัติ';
     box.style.display = 'block';
   }
 
-  function render() {
-    const data = load();
-    const k = dKey(curDate);
-    const tasks = data[k] || [];
-    
-    // Header Date
-    const options = { weekday:'long', day:'numeric', month:'short', year:'numeric' };
-    document.getElementById('dateLabel').innerText = curDate.toLocaleDateString('th-TH', options);
-
-    // List Today
-    const badgeCls = {todo:'badge-todo', inprogress:'badge-inprogress', done:'badge-done'};
-    const badgeTxt = {todo:'📋 To Do', inprogress:'⚡ Doing', done:'✅ Done'};
-    
-    document.getElementById('listItems').innerHTML = tasks.map(t => `
-      <div class="todo-item" style="${t.status==='done'?'opacity:0.6':''}">
-        <span class="cat-label">${t.cat}</span>
-        <div class="todo-top">
-          <span class="todo-text" style="${t.status==='done'?'text-decoration:line-through':''}">${t.text}</span>
-          <button class="badge ${badgeCls[t.status]}" onclick="updateStatus(${t.id})">${badgeTxt[t.status]}</button>
-          <button onclick="delTask(${t.id})" style="border:none; background:none; color:red; cursor:pointer;">✕</button>
-        </div>
-      </div>
-    `).join('');
-
-    // Overdue
-    let odHtml = '';
-    Object.keys(data).forEach(day => {
-      if(day < dKey(new Date())) {
-        data[day].forEach(t => {
-          if(t.status !== 'done') odHtml += `<div class="todo-item"><span class="cat-label">${t.cat} (${day})</span><div class="todo-top"><span>${t.text}</span><button class="badge ${badgeCls[t.status]}" onclick="updateStatus(${t.id},'${day}')">${badgeTxt[t.status]}</button></div></div>`;
-        });
-      }
-    });
-    document.getElementById('overdueBox').style.display = odHtml ? 'block' : 'none';
-    document.getElementById('overdueItems').innerHTML = odHtml;
-
-    // Progress Today
-    const doneToday = tasks.filter(t => t.status === 'done').length;
-    document.getElementById('todayCount').innerText = `${doneToday}/${tasks.length}`;
-    document.getElementById('todayBar').style.width = tasks.length ? (doneToday/tasks.length*100)+'%' : '0%';
-
-    // Chart & Total
-    let totalAll = 0, totalDone = 0, totalDoing = 0, totalTodo = 0;
-    Object.values(data).flat().forEach(t => {
-      totalAll++;
-      if(t.status==='done') totalDone++;
-      else if(t.status==='inprogress') totalDoing++;
-      else totalTodo++;
-    });
-    document.getElementById('statAll').innerText = totalAll;
-    document.getElementById('statDone').innerText = totalDone;
-    document.getElementById('totalPct').innerText = totalAll ? Math.round(totalDone/totalAll*100)+'%' : '0%';
-    
-    if(!chart) {
-      chart = new Chart(document.getElementById('myChart'), {
-        type:'doughnut',
-        data:{ datasets:[{ data:[0,0,1], backgroundColor:['#16a34a','#7c3aed','#bfdbfe'], borderWidth:0 }] },
-        options:{ cutout:'75%', plugins:{legend:{display:false}} }
-      });
-    }
-    chart.data.datasets[0].data = totalAll ? [totalDone, totalDoing, totalTodo] : [0,0,1];
-    chart.update();
+  function changeDay(n) { curDate.setDate(curDate.getDate() + n); render(); }
+  function goToday() { curDate = new Date(); render(); }
+  function exportData() {
+    const blob = new Blob([JSON.stringify(loadFromLocal())], {type:'application/json'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'backup.json'; a.click();
+  }
+  function importData(e) {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = (ev) => { saveToLocal(JSON.parse(ev.target.result)); render(); };
+    reader.readAsText(file);
   }
 
   window.onload = render;
